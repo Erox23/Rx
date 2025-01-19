@@ -1,0 +1,48 @@
+#include <nano-X.h>
+#include <stdio.h>
+
+int main() {
+    GR_WINDOW_ID win;
+    GR_GC_ID gc;
+    GR_EVENT event;
+
+    // Initialize Nano-X
+    if (GrOpen() < 0) {
+        fprintf(stderr, "Cannot open Nano-X\n");
+        return 1;
+    }
+
+    // Create a window
+    win = GrNewWindow(GR_ROOT_WINDOW_ID, 50, 50, 200, 100, 1, GR_COLOR_WHITE, GR_COLOR_BLACK);
+
+    // Set graphics context
+    gc = GrNewGC();
+
+    // Map the window (make it visible)
+    GrMapWindow(win);
+
+    // Event loop
+    while (1) {
+        GrGetNextEvent(&event);
+
+        switch (event.type) {
+            case GR_EVENT_TYPE_CLOSE_REQ:
+                GrClose();
+                return 0;
+
+            case GR_EVENT_TYPE_EXPOSURE:
+                GrSetGCForeground(gc, GR_COLOR_RED);
+                GrFillRect(win, gc, 10, 10, 180, 80);
+                GrSetGCForeground(gc, GR_COLOR_BLACK);
+                GrText(win, gc, 20, 50, "Hello, OpenTom!", -1, GR_TFASCII);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    // Close Nano-X
+    GrClose();
+    return 0;
+}
